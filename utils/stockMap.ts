@@ -1,0 +1,22 @@
+const stockMap: { [key: string]: string[] } = {
+  HDFC: ['HDFC', 'HDFC Bank'],
+  HCL: ['HCL', 'HCLTech', 'HCL Technologies'],
+  WIPRO: ['WIPRO'],
+  AXIS: ['AXIS', 'Axis Bank'],
+  CIPLA: ['CIPLA'],
+  SBIN: ['SBIN', 'State Bank of India', 'SBI'],
+  SWIGGY: ['SWIGGY', 'Bundl Technologies'],
+  ZOMATO: ['ZOMATO'],
+  TCS: ['TCS', 'Tata Consultancy Services'],
+  RELIANCE: ['RELIANCE', 'Reliance Industries'],
+  INFY: ['INFY', 'Infosys'],
+  ICICI: ['ICICI', 'ICICI Bank'],
+  LIC: ['LIC', 'Life Insurance Corporation'],
+  HINDUNILVR: ['Hindustan Unilever', 'HINDUNILVR'],
+  INDUSIND: ['IndusInd', 'IndusInd Bank'],
+  LTI: ['LTI', 'Larsen & Toubro Infotech', 'LTIMindtree'],
+  ADANI: ['ADANI', 'Adani Enterprises', 'Adani Ports', 'Adani Green'],
+  HDB: ['HDB', 'HDFC Bank'],
+  VODAFONE: ['Vodafone', 'Vodafone Idea', 'Vi'],
+}
+export default stockMap
