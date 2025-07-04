@@ -55,15 +55,15 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
-      <h1 className="text-3xl font-bold mb-4">Smart News + Portfolio Insights</h1>
+    <div className="min-h-screen bg-gray-900 text-white p-6 ">
+      <h1 className="text-3xl font-bold text-center mb-4"> Envest Smart News + Portfolio Insights</h1>
 
       <div className="flex gap-2 mb-4">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter stock (e.g., TCS or Infosys)"
-          className="px-4 py-2 text-black rounded"
+          placeholder="Enter stock (e.g., PNB or NIFTY)"
+          className="px-4 py-2 text-white rounded"
         />
         <button onClick={handleAddStock} className="bg-blue-600 px-4 py-2 rounded">Add Stock</button>
       </div>
@@ -99,7 +99,13 @@ export default function Home() {
   )
 }
 
-function SentimentTag({ title, portfolio }: { title: string; portfolio: string[] }) {
+function SentimentTag({
+  title,
+  portfolio
+}: {
+  title: string
+  portfolio: string[]
+}) {
   const [sections, setSections] = useState<{
     summary?: string
     advice?: string
@@ -109,27 +115,32 @@ function SentimentTag({ title, portfolio }: { title: string; portfolio: string[]
 
   useEffect(() => {
     let cancelled = false
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
     const analyze = async () => {
-      for (const stock of portfolio) {
-        try {
-          const result = await getSentiment(title, stock)
-          if (cancelled || !result) return
+      if (portfolio.length === 0) return
 
-          const summary = result.match(/1\..*?:([\s\S]*?)2\./)?.[1]?.trim()
-          const advice = result.match(/2\..*?:([\s\S]*?)3\./)?.[1]?.trim()
-          const outlook = result.match(/3\..*?:([\s\S]*?)4\./)?.[1]?.trim()
-          const sentiment = result.match(/4\..*?:([\s\S]*)$/)?.[1]?.trim()
+      const stock = portfolio[0] // Only analyze for first matched stock
 
-          if (summary || advice || outlook || sentiment) {
-            setSections({ summary, advice, outlook, sentiment })
-            return
-          }
-        } catch (err) {
-          console.error(`Error analyzing sentiment for "${title}"`, err)
+      try {
+        await sleep(1000) // Delay to reduce API load
+
+        const result = await getSentiment(title, stock)
+        if (cancelled || !result) return
+
+        const summary = result.match(/1\..*?:([\s\S]*?)2\./)?.[1]?.trim()
+        const advice = result.match(/2\..*?:([\s\S]*?)3\./)?.[1]?.trim()
+        const outlook = result.match(/3\..*?:([\s\S]*?)4\./)?.[1]?.trim()
+        const sentiment = result.match(/4\..*?:([\s\S]*)$/)?.[1]?.trim()
+
+        if (summary || advice || outlook || sentiment) {
+          setSections({ summary, advice, outlook, sentiment })
         }
+      } catch (err) {
+        console.error(`Error analyzing sentiment for "${title}"`, err)
       }
 
-      if (!cancelled) {
+      if (!cancelled && !sections) {
         setSections({
           summary: 'No significant information found.',
           advice: 'Hold',
@@ -146,7 +157,7 @@ function SentimentTag({ title, portfolio }: { title: string; portfolio: string[]
   if (!sections) return <p className="text-gray-400 mt-2">🧠 Analyzing...</p>
 
   return (
-    <div className="mt-3 text-sm text-gray-300 space-y-1">
+    <div className="mt-3 text-sm text-gray-300 space-y-1 border border-gray-600 p-2 rounded bg-gray-800">
       {sections.summary && <p>📊 <strong>Market Summary:</strong> {sections.summary}</p>}
       {sections.advice && <p>💡 <strong>Investment Advice:</strong> {sections.advice}</p>}
       {sections.outlook && <p>🔮 <strong>Future Outlook:</strong> {sections.outlook}</p>}

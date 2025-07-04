@@ -1,12 +1,7 @@
-// pages/api/analyzeSentiment.ts
 import { NextApiRequest, NextApiResponse } from 'next'
-import OpenAI from 'openai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-console.log('🔑 API Key:', process.env.OPENAI_API_KEY ? 'Exists' : 'Missing')
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -14,43 +9,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { headline, ticker } = req.body
-
   if (!headline || !ticker) {
     return res.status(400).json({ error: 'Missing headline or ticker' })
   }
 
   try {
+    const model = genAI.getGenerativeModel({ model: 'models/gemini-1.5-pro' }) // ✅ Correct
     const prompt = `
 You are a financial news analyst AI. Analyze the following headline and provide a detailed report in four sections:
 
-1. 📊 Market Summary: Briefly summarize what this headline implies about the overall market or the specific stock (${ticker}).
-2. 💡 Investment Advice: Offer concise advice for investors — for example, "Hold", "Watch closely", "Buy on dips", or "Avoid for now".
-3. 🔮 Future Outlook: Predict the possible short-term direction (e.g., bullish, bearish, volatile, stable) for ${ticker} based on this news.
-4. 📈 Sentiment Impact: Choose one of [Positive, Negative, Neutral] to indicate the direct impact of the news on ${ticker}.
+1. 📊 Market Summary:
+2. 💡 Investment Advice:
+3. 🔮 Future Outlook:
+4. 📈 Sentiment Impact:
 
-Headline:
-"${headline}"
-
-Format the output exactly with numbered sections as instructed.
+Headline: "${headline}" — Stock: ${ticker}
     `.trim()
 
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        { role: 'system', content: 'You are a financial sentiment assistant.' },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.4,
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const text = response.text()
+
+    res.status(200).json({ analysis: text })
+  } catch (error: any) {
+    console.error('Gemini API error:', error)
+    res.status(500).json({
+      error: 'Failed to analyze sentiment',
+      details: error?.message || 'Unknown error',
     })
-    
-    console.log('🔑 API Key:', process.env.OPENAI_API_KEY ? 'Exists' : 'Missing')
-    
-    
-    const analysis = completion.choices[0].message.content?.trim() ?? 'Analysis not available.'
-    console.log('🔍 OpenAI Completion:', analysis)
-    res.status(200).json({ analysis })
-  } catch (error) {
-    console.error('OpenAI API error:', error)
-    res.status(500).json({ error: 'Failed to analyze sentiment' })
   }
 }
