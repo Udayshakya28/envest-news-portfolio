@@ -10,6 +10,7 @@ type Headline = {
   link: string
 }
 
+
 type TaggedHeadline = Headline & { matchedStocks: string[] }
 
 export default function Home() {
@@ -78,21 +79,23 @@ export default function Home() {
         {filteredNews.length === 0 ? (
           <p className="text-gray-400">No matching news found.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredNews.map((item, idx) => (
-              <div key={idx} className="bg-gray-800 p-4 rounded-xl shadow-lg">
-                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-lg font-semibold">
-                  {item.title}
-                </a>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {item.matchedStocks.map(stock => (
-                    <span key={stock} className="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">📈 {stock}</span>
-                  ))}
-                </div>
-                <SentimentTag title={item.title} portfolio={item.matchedStocks} />
-              </div>
-            ))}
-          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+  {filteredNews.map((item, idx) => (
+    <div key={idx} className="bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-5 hover:shadow-xl transition">
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="text-lg font-semibold text-white">{item.title}</h3>
+          <a href={item.link} target="_blank" className="text-sm text-blue-400 underline">
+            Read more
+          </a>
+        </div>
+        <div className="text-2xl">{item.matchedStocks[0]?.[0] || '📈'}</div>
+      </div>
+      <SentimentTag title={item.title} portfolio={item.matchedStocks} />
+    </div>
+  ))}
+</div>
+
         )}
       </div>
     </div>
