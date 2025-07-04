@@ -43,11 +43,17 @@ Headline: "${headline}" — Stock: ${ticker}
     const result = completion.choices[0].message.content?.trim()
 
     res.status(200).json({ analysis: result })
-  } catch (error: any) {
-    console.error('OpenAI API error:', error)
-    res.status(500).json({
-      error: 'Failed to analyze sentiment with OpenAI',
-      details: error?.message || 'Unknown error',
-    })
+ } catch (error: unknown) {
+  console.error('OpenAI API error:', error);
+
+  let errorMessage = 'Unknown error';
+  if (error instanceof Error) {
+    errorMessage = error.message;
   }
+
+  res.status(500).json({
+    error: 'Failed to analyze sentiment with OpenAI',
+    details: errorMessage,
+  });
+}
 }
