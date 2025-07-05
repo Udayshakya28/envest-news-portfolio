@@ -1,10 +1,7 @@
-// pages/api/analyzeSentiment.ts
 import { NextApiRequest, NextApiResponse } from 'next'
-import OpenAI from 'openai'
+import { GoogleGenerativeAI } from '@google/generative-ai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -29,31 +26,23 @@ Headline: "${headline}" — Stock: ${ticker}
 `.trim()
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo', // Change to 'gpt-4' if needed and available
-      messages: [
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.7,
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+    const result = await model.generateContent(prompt)
+    const response = await result.response
+    const analysis = response.text()
+
+    res.status(200).json({ analysis })
+  } catch (error: unknown) {
+    console.error('Gemini API error:', error)
+
+    let errorMessage = 'Unknown error'
+    if (error instanceof Error) {
+      errorMessage = error.message
+    }
+
+    res.status(500).json({
+      error: 'Failed to analyze sentiment with Gemini AI',
+      details: errorMessage,
     })
-
-    const result = completion.choices[0].message.content?.trim()
-
-    res.status(200).json({ analysis: result })
- } catch (error: unknown) {
-  console.error('OpenAI API error:', error);
-
-  let errorMessage = 'Unknown error';
-  if (error instanceof Error) {
-    errorMessage = error.message;
   }
-
-  res.status(500).json({
-    error: 'Failed to analyze sentiment with OpenAI',
-    details: errorMessage,
-  });
-}
 }
