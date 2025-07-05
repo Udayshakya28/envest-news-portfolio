@@ -39,9 +39,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">
-        Envest Smart News + Portfolio Insights
-      </h1>
+      <h1 className="text-3xl font-bold text-center mb-6 flex justify-center items-center gap-2">
+  <img
+    src="https://envestapp.com/brand/EnvestLogoNavBar.svg"
+    alt="Envest Logo"
+    className="h-8"
+  />
+  <span className="text-white bg-white-50">Smart News + Portfolio Insights</span>
+</h1>
 
       <div className="flex gap-2 mb-6">
         <input
@@ -93,34 +98,41 @@ export default function Home() {
               if (matched.length === 0) return null
 
               return (
-                <div key={stock}>
-                  <h3 className="text-2xl font-bold text-blue-400 mb-4 border-b border-gray-700 pb-2">
-                     {stock}
-                  </h3>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {matched.map((headline, idx) => (
-                      <div
-                        key={idx}
-                        className="bg-gray-800 border border-gray-700 rounded-2xl shadow-md hover:shadow-2xl hover:border-blue-500 transition-all duration-300 p-5"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="space-y-1">
-                            <h3 className="text-lg font-semibold text-white">{headline.title}</h3>
-                            <a
-                              href={headline.link}
-                              target="_blank"
-                              className="text-sm text-blue-400 hover:text-blue-300 underline"
-                            >
-                              🔗 Read more
-                            </a>
-                          </div>
-                          <div className="text-2xl">{stock[0] || '📈'}</div>
-                        </div>
-                        <SentimentTag title={headline.title} portfolio={[stock]} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
+               <div key={stock}>
+  <h3 className="text-2xl font-bold text-blue-600 mb-6 border-b border-gray-300 pb-2">
+     {stock}
+  </h3>
+
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {matched.map((headline, idx) => (
+      <div
+        key={idx}
+        className="bg-white border border-white rounded-2xl p-5 shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300"
+      >
+        <div className="flex justify-between items-start mb-3">
+          <div className="space-y-1">
+            <h3 className="text-md font-semibold text-gray-900">{headline.title}</h3>
+            <a
+              href={headline.link}
+              target="_blank"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              🔗 Read more
+            </a>
+          </div>
+          <div className="text-xl text-gray-500 font-bold">
+            {stock[0] || '📈'}
+          </div>
+        </div>
+
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+          <SentimentTag title={headline.title} portfolio={[stock]} />
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
               )
             })}
           </div>
@@ -186,20 +198,20 @@ function SentimentTag({
     return () => { cancelled = true }
   }, [title, portfolio])
 
-  if (!sections) return <p className="text-gray-400 mt-2">🧠 Analyzing...</p>
+  if (!sections) return <p className="text-gray-400 mt-2"> Analyzing...</p>
 
   return (
-    <div className="mt-3 text-sm text-gray-300 space-y-1 border border-gray-600 p-3 rounded-xl bg-gray-900/70 shadow-inner">
-      {sections.summary && <p>📊 <strong>Market Summary:</strong> {sections.summary}</p>}
-      {sections.advice && <p>💡 <strong>Investment Advice:</strong> {sections.advice}</p>}
-      {sections.outlook && <p>🔮 <strong>Future Outlook:</strong> {sections.outlook}</p>}
+    <div className="mt-3 text-sm text-gray-300 space-y-1 border border-gray-300 p-3 rounded-xl bg-gray-950/70 shadow-inner">
+      {sections.summary && <p> <strong> Market Summary:</strong> {sections.summary}</p>}
+      {sections.advice && <p> <strong>Investment Advice:</strong> {sections.advice}</p>}
+      {sections.outlook && <p> <strong>Future Outlook:</strong> {sections.outlook}</p>}
       {sections.sentiment && (
         <p className={
           sections.sentiment.includes('Positive') ? 'text-green-400' :
           sections.sentiment.includes('Negative') ? 'text-red-400' :
           'text-yellow-300'
         }>
-          📈 <strong>Sentiment Impact:</strong> {sections.sentiment}
+           <strong>Sentiment Impact:</strong> {sections.sentiment}
         </p>
       )}
     </div>
