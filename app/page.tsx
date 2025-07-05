@@ -54,7 +54,7 @@ export default function Home() {
           onClick={handleAddStock}
           className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded-lg"
         >
-          ➕ Add Stock
+          Add Stock
         </button>
       </div>
 
@@ -95,7 +95,7 @@ export default function Home() {
               return (
                 <div key={stock}>
                   <h3 className="text-2xl font-bold text-blue-400 mb-4 border-b border-gray-700 pb-2">
-                    📌 {stock}
+                     {stock}
                   </h3>
                   <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {matched.map((headline, idx) => (
